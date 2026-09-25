@@ -156,6 +156,10 @@ function safeFileName(name, maxLen) {
 
 const MIME_EXT = { jpeg: "jpg", "svg+xml": "svg", "x-icon": "ico" };
 
+// Tags that start a CommonMark HTML block (the common ones Turndown keeps).
+const HTML_BLOCK_START =
+  /^<\/?(table|thead|tbody|tfoot|tr|td|th|caption|div|p|ul|ol|li|dl|figure|figcaption|section|article|aside|header|footer|nav|blockquote|center|details|summary|form|fieldset|h[1-6]|hr|pre|iframe|video)\b/i;
+
 // Moves every data: image out of the markdown into its own vault file.
 // Handles both markdown images and raw <img> tags Turndown kept as HTML;
 // the same image appearing twice is uploaded once.
@@ -188,16 +192,27 @@ async function extractImages(markdown, baseName, attachmentsFolder) {
     saved.set(dataUrl, fileName);
     images.push(path);
   }
-  // A raw <img> only exists inside HTML that Turndown kept as-is (e.g. the
-  // table around humoruniv's MP4 attachments). Obsidian doesn't render
-  // ![[embeds]] inside an HTML block, and a blank line ends the block — so
-  // put the embed on its own paragraph, keeping the width the tag had.
-  const out = markdown.replace(re, (whole, d1, _s1, d2) => {
+  // A raw <img> is either a small icon content.js kept as HTML to hold its
+  // size, or sits inside HTML Turndown kept as-is (e.g. the table around
+  // humoruniv's MP4 attachments). The width goes into ![[name|width]].
+  // Where it lands matters:
+  // - inside an HTML block, Obsidian doesn't render ![[embeds]], and a blank
+  //   line ends the block — so give the embed its own paragraph;
+  // - in a markdown table row, "|" is the cell separator, so escape it;
+  // - anywhere else (inline, e.g. inside a link), leave it inline.
+  const out = markdown.replace(re, (whole, d1, _s1, d2, _s2, offset, str) => {
     const name = saved.get((d1 || d2).replace(/\s+/g, ""));
     if (!name) return whole;
     if (d1) return `![[${name}]]`;
     const w = /\bwidth="(\d+)"/.exec(whole);
-    return `\n\n![[${name}${w ? "|" + w[1] : ""}]]\n\n`;
+    const line = str.slice(str.lastIndexOf("\n", offset) + 1, offset).trimStart();
+    if (line.startsWith("|")) return `![[${name}${w ? "\\|" + w[1] : ""}]]`;
+    const embed = `![[${name}${w ? "|" + w[1] : ""}]]`;
+    // An HTML block is a paragraph that opens with a block-level tag; an
+    // <img> or <span> at the start (namu.wiki's inline icons) is not one.
+    const paraStart = str.lastIndexOf("\n\n", offset);
+    const para = str.slice(paraStart < 0 ? 0 : paraStart + 2, offset).trimStart();
+    return HTML_BLOCK_START.test(para) ? `\n\n${embed}\n\n` : embed;
   });
   return { markdown: out, images };
 }

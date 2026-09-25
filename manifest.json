@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Obsidian Clipper Plus",
-  "version": "0.38.0",
+  "version": "0.38.1",
   "description": "Web clipper that saves articles, selections, full pages, bookmarks and webtoon images into your Obsidian vault, images included.",
   "permissions": ["activeTab", "scripting", "storage", "debugger"],
   "host_permissions": ["http://127.0.0.1/*", "http://localhost/*", "<all_urls>"],
