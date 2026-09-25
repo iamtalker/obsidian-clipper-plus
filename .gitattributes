@@ -4,4 +4,5 @@
 scripts export-ignore
 store-assets export-ignore
 HANDOFF.md export-ignore
+CLAUDE.md export-ignore
 *.sh text eol=lf
