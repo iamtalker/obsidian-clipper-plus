@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Obsidian Clipper Plus - Settings</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; width: 440px; padding: 16px; color: #222; }
+  h1 { font-size: 16px; margin: 0 0 12px; }
+  label { display: block; font-size: 12px; font-weight: 600; margin: 12px 0 4px; }
+  label.check { font-weight: 400; display: flex; gap: 6px; align-items: center; }
+  input[type=text], input:not([type]) { width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
+  button { margin-top: 14px; padding: 7px 14px; font-size: 13px; border: none; border-radius: 4px; background: #7c4dff; color: #fff; cursor: pointer; }
+  button.secondary { background: #eee; color: #333; margin-left: 8px; }
+  #status { margin-top: 10px; font-size: 12px; }
+  .ok { color: #1a7f37; }
+  .err { color: #c62828; }
+  .hint { font-size: 11px; color: #666; margin-top: 4px; }
+</style>
+</head>
+<body>
+  <h1>Obsidian Clipper Plus — Settings</h1>
+
+  <label for="port">Local REST API HTTP port</label>
+  <input id="port" placeholder="27123" />
+  <div class="hint">Obsidian → Settings → Community plugins → "Local REST API with MCP" → turn on <b>Enable Non-encrypted (HTTP) Server</b>.</div>
+
+  <label for="key">API key</label>
+  <input id="key" placeholder="paste the API key from the plugin's settings" />
+
+  <label for="folder">Default folder for notes</label>
+  <input id="folder" placeholder="Clippings" />
+  <div class="hint">Relative to the vault root. Empty = vault root. Created automatically.</div>
+
+  <label for="attach">Attachments folder for images</label>
+  <input id="attach" placeholder="Clippings/attachments" />
+
+  <label class="check"><input type="checkbox" id="open" /> Open the note in Obsidian after saving</label>
+
+  <button id="save">Save</button>
+  <button id="test" class="secondary">Test connection</button>
+  <div id="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
