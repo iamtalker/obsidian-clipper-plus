@@ -35,6 +35,27 @@ document.getElementById("save").addEventListener("click", () => {
   chrome.storage.local.set(collect(), () => setStatus("Saved.", true));
 });
 
+// Copies Obsidian's "Default location for new attachments"
+// (.obsidian/app.json → attachmentFolderPath) into the field. Obsidian
+// leaves the key out when it's the default, which is the vault root.
+document.getElementById("fromObsidian").addEventListener("click", async (e) => {
+  e.preventDefault();
+  const { obsidianPort, obsidianKey } = collect();
+  if (!obsidianKey) return setStatus("Enter the API key first.", false);
+  try {
+    const res = await fetch(`http://127.0.0.1:${obsidianPort}/vault/.obsidian/app.json`, {
+      headers: { Authorization: `Bearer ${obsidianKey}` },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const path = ((await res.json()).attachmentFolderPath || "/").trim();
+    els.attachmentsFolder.value = path === "/" ? "" : path;
+    const where = path === "/" ? "vault root" : path.startsWith("./") ? `"${path}" (next to the note)` : `"${path}"`;
+    setStatus(`Obsidian saves attachments to: ${where}. Press Save to keep it.`, true);
+  } catch (err) {
+    setStatus("Couldn't read Obsidian's setting: " + err.message, false);
+  }
+});
+
 document.getElementById("test").addEventListener("click", async () => {
   await chrome.storage.local.set(collect());
   setStatus("Testing…");

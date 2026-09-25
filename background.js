@@ -28,6 +28,16 @@ function cleanFolder(p) {
   return (p || "").trim().replace(/\\/g, "/").replace(/^\/+|\/+$/g, "");
 }
 
+// Same convention as Obsidian's own "attachmentFolderPath": "./" or
+// "./sub" means relative to the folder the note is saved in.
+function attachmentsFolderFor(setting, noteFolder) {
+  const s = (setting || "").trim().replace(/\\/g, "/");
+  const m = /^\.(?:\/(.*))?$/.exec(s);
+  if (!m) return cleanFolder(s);
+  const sub = cleanFolder(m[1]);
+  return [noteFolder, sub].filter(Boolean).join("/");
+}
+
 // Each path segment is encoded on its own; real "/" separators must stay.
 function encodePath(p) {
   return p.split("/").map(encodeURIComponent).join("/");
@@ -234,7 +244,7 @@ async function saveFullPageFile(clip, baseName, attachmentsFolder) {
 async function saveClip({ clip, parentId, tags, titleOverride }) {
   const settings = await getSettings();
   const folder = cleanFolder(parentId || settings.defaultFolder);
-  const attachmentsFolder = cleanFolder(settings.attachmentsFolder);
+  const attachmentsFolder = attachmentsFolderFor(settings.attachmentsFolder, folder);
   const title = titleOverride || clip.title || "Untitled";
   const { iso, compact } = timestamps();
 

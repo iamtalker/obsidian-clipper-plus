@@ -1,6 +1,6 @@
 # HANDOFF — Obsidian Clipper Plus 인계 문서
 
-마지막 갱신: 2026-09-25 / 현재 버전: **v0.37.0** (GitHub 태그·릴리스 완료) / 작업 폴더: `C:\claude program\obsidian-clipper-plus`
+마지막 갱신: 2026-09-25 / 현재 버전: **v0.38.0**(조플린은 0.37.0) (GitHub 태그·릴리스 완료) / 작업 폴더: `C:\claude program\obsidian-clipper-plus`
 
 ## 0. 이 프로젝트는
 - 조플린용 크롬 확장 **Joplin Clipper Plus**(`C:\claude program\joplin-clipper-plus`, 레포 `iamtalker/joplin-clipper-plus`)를 포크해서 옵시디언용으로 바꾼 크롬 확장(Manifest V3). 레포: `iamtalker/obsidian-clipper-plus`(공개).
@@ -27,7 +27,7 @@
 - API 요점(실제로 확인함): `PUT /vault/<경로>`는 중간 폴더를 자동 생성하고 바이너리도 받음, **기존 파일은 조용히 덮어씀**. `HEAD`는 없는 파일이면 404. 경로는 `/`로 나눠서 조각마다 `encodeURIComponent`. `GET /vault/<폴더>/`는 한 단계만 나열하고 빈 폴더는 안 보여줌. `POST /open/<경로>`는 옵시디언에서 노트를 엶. 전체 명세: 플러그인 레포의 `docs/openapi.yaml`.
 - 저장 흐름: 마크다운 안의 `data:image` → 첨부 폴더(기본 `Clippings/attachments`)에 파일로 PUT → 본문에서 `![[파일명]]`으로 교체(같은 이미지는 한 번만). 첨부 파일명은 `YYYYMMDD-HHMMSS-제목-N.ext`이고, 이미 있으면 번호를 건너뜀(같은 초에 두 번 저장해도 안 겹치게 — 테스트로 찾은 버그를 고친 것).
 - 노트: frontmatter(`title`, `source`, `clipped`, `tags`) + 본문. 파일명에 못 쓰는 문자 정리, 같은 이름이 있으면 `제목 (2).md`.
-- 설정(`chrome.storage.local`): `obsidianKey`, `obsidianPort`(27123), `defaultFolder`(Clippings), `attachmentsFolder`(Clippings/attachments), `openAfterSave`(false).
+- 설정(`chrome.storage.local`): `obsidianKey`, `obsidianPort`(27123), `defaultFolder`(Clippings), `attachmentsFolder`(Clippings/attachments — `./`로 시작하면 노트 폴더 기준, `attachmentsFolderFor()`; 설정 화면 버튼이 `.obsidian/app.json`의 `attachmentFolderPath`를 읽어 채움), `openAfterSave`(false).
 - Full Page 모드(0.37.0~): 옵시디언은 HTML 노트가 없고 md 안의 HTML은 스타일이 지워지므로, `clip.html`(이미지 data: URL 포함)을 첨부 폴더에 `.html` 파일로 PUT하고 노트에는 `[[파일.html|...]]` 링크를 넣음(`saveFullPageFile`). 사용자가 조플린과의 **기능 일관성**을 원해서 추가함.
 - **남은 확인**: 옵시디언에서 `[[x.html]]` 링크를 눌렀을 때 기본 브라우저로 잘 열리는지는 실제 앱에서 사람이 눌러 봐야 함(API로 확인 불가).
 
@@ -44,11 +44,11 @@
 - 테스트 방법: §5 + 사이트 목록을 도는 스크립트(게시판 목록 → 페이지를 스크롤해 사진 있는 글 고르기 → `clipAndSave` → 볼트의 노트에서 `![[` 개수, 원격 이미지, 남은 `data:image` 검사). Cloudflare 사이트(아카, 나무위키, aagag)는 사람 확인이 뜨면 사용자가 눌러야 함.
 
 **다음 후보**
-1. **뀨잉(qquing.net)**: 테스트에서 메인 페이지 목록의 글 링크 형식을 못 찾음(한 번은 접속 시간 초과) — 글 주소 형식 확인 후 테스트.
-2. **디시 모바일 광고 문구**: 본문 끝에 광고 기사 제목들("부모님 물려준 땅…")이 한 번 섞였는데 재현 안 됨. 다시 나오면 요소 찾아서 정리 목록에 추가.
+1. ~~뀨잉~~ → 확인 완료(글 주소는 `bbs/board.php?bo_table=humor&wr_id=N`, 사진 글 정상).
+2. **디시 모바일 광고 문구**(우선순위 낮음 — 사용자는 데스크톱만 씀): 원인 찾음. `m.dcinside.com`의 선택자 `.thum-txt`가 스크롤하면 불러와지는 아래쪽 순위 목록 항목(`span.rank-num`이 든 `.thum-txt`)에도 걸려서 광고성 기사 제목이 딸려 옴. 고치려면 글 본문의 첫 `.thum-txt`만 잡도록 선택자를 좁히면 됨.
 3. **옵시디언에서 눈으로 확인**: Full Page 노트의 `[[x.html]]` 링크 클릭 시 브라우저로 열리는지, 표 밖으로 빼낸 `![[파일|너비]]`가 제대로 보이는지는 사용자가 앱에서 확인해 줘야 함.
 4. **폴더 선택 개선**: API가 빈 폴더를 안 보여줘서 새로 만든 빈 폴더가 목록에 안 나옴. 팝업에서 새 폴더 이름을 직접 입력하는 칸도 고려.
-5. **옵시디언다운 기능**: 첨부 폴더를 옵시디언 자체 설정(`.obsidian/app.json`의 `attachmentFolderPath`)에 맞추기, 저장 후 열기 기본값, 노트 템플릿(frontmatter 항목) 설정.
+5. **옵시디언다운 기능**: ~~첨부 폴더를 옵시디언 설정에 맞추기~~(0.38.0 완료), 저장 후 열기 기본값, 노트 템플릿(frontmatter 항목) 설정.
 6. **관리 편의**(사용자가 옵시디언으로 옮기려는 이유): 이 플러그인의 MCP 서버(`https://127.0.0.1:27124/mcp/`)를 Claude에 연결하면 중복 노트 찾기, 안 쓰는 첨부 이미지 정리 같은 걸 Claude가 볼트에서 직접 할 수 있음. 또는 볼트가 그냥 폴더라 스크립트로 해결.
 7. **크롬 웹 스토어**(나중에): `debugger`와 `<all_urls>` 권한이 심사 대상이라 사유 설명이 필요함. 원본도 같은 문제가 있음(원본 HANDOFF 3번). 스토어 이름 "Obsidian Clipper Plus"는 기존 확장(Obsidian Web Clipper, Obsidian Clipper, Obsidian Plus Web Clipper)과 헷갈릴 수 있다는 점은 사용자에게 이미 알렸고, 사용자가 일관성 때문에 이 이름으로 정함.
 
