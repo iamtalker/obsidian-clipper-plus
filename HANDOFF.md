@@ -1,6 +1,6 @@
 # HANDOFF — Obsidian Clipper Plus 인계 문서
 
-마지막 갱신: 2026-09-25 / 현재 버전: **v0.38.0**(조플린은 0.37.0) (GitHub 태그·릴리스 완료) / 작업 폴더: `C:\claude program\obsidian-clipper-plus`
+마지막 갱신: 2026-09-25 / 현재 버전: **v0.38.0**(조플린은 0.37.1) (GitHub 태그·릴리스 완료) / 작업 폴더: `C:\claude program\obsidian-clipper-plus`
 
 ## 0. 이 프로젝트는
 - 조플린용 크롬 확장 **Joplin Clipper Plus**(`C:\claude program\joplin-clipper-plus`, 레포 `iamtalker/joplin-clipper-plus`)를 포크해서 옵시디언용으로 바꾼 크롬 확장(Manifest V3). 레포: `iamtalker/obsidian-clipper-plus`(공개).
