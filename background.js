@@ -149,9 +149,12 @@ const MIME_EXT = { jpeg: "jpg", "svg+xml": "svg", "x-icon": "ico" };
 // Moves every data: image out of the markdown into its own vault file.
 // Handles both markdown images and raw <img> tags Turndown kept as HTML;
 // the same image appearing twice is uploaded once.
+// Alt text and titles can hold backslash-escaped brackets/quotes — news photo
+// captions like "\[뉴욕=AP/뉴시스\]" — so those are matched as escapes rather
+// than stopping at the first "]".
 async function extractImages(markdown, baseName, attachmentsFolder) {
   const re =
-    /!\[[^\]]*\]\((data:image\/([a-zA-Z0-9.+-]+);base64,[A-Za-z0-9+/=\s]+?)(?:\s+"[^"]*")?\)|<img\b[^>]*?\bsrc="(data:image\/([a-zA-Z0-9.+-]+);base64,[A-Za-z0-9+/=\s]+?)"[^>]*>/g;
+    /!\[(?:\\.|[^\]\\])*\]\((data:image\/([a-zA-Z0-9.+-]+);base64,[A-Za-z0-9+/=\s]+?)(?:\s+"(?:\\.|[^"\\])*")?\)|<img\b[^>]*?\bsrc="(data:image\/([a-zA-Z0-9.+-]+);base64,[A-Za-z0-9+/=\s]+?)"[^>]*>/g;
   const matches = [...markdown.matchAll(re)];
   if (!matches.length) return { markdown, images: [] };
 
@@ -175,9 +178,16 @@ async function extractImages(markdown, baseName, attachmentsFolder) {
     saved.set(dataUrl, fileName);
     images.push(path);
   }
+  // A raw <img> only exists inside HTML that Turndown kept as-is (e.g. the
+  // table around humoruniv's MP4 attachments). Obsidian doesn't render
+  // ![[embeds]] inside an HTML block, and a blank line ends the block — so
+  // put the embed on its own paragraph, keeping the width the tag had.
   const out = markdown.replace(re, (whole, d1, _s1, d2) => {
     const name = saved.get((d1 || d2).replace(/\s+/g, ""));
-    return name ? `![[${name}]]` : whole;
+    if (!name) return whole;
+    if (d1) return `![[${name}]]`;
+    const w = /\bwidth="(\d+)"/.exec(whole);
+    return `\n\n![[${name}${w ? "|" + w[1] : ""}]]\n\n`;
   });
   return { markdown: out, images };
 }
@@ -205,10 +215,23 @@ function parseTags(tags) {
     .filter(Boolean);
 }
 
-async function saveClip({ clip, parentId, tags, titleOverride }) {
-  if (clip.mode === "full") {
-    throw new Error("Full Page 모드는 Obsidian 버전에서 지원하지 않아요. Article 모드를 써 주세요.");
+// Full Page: Obsidian has no HTML notes (Joplin does), and HTML pasted into
+// a .md gets its <style> stripped, so the page would render broken. Instead
+// the whole page — images already inlined as data: URLs by content.js — goes
+// into the attachments folder as one self-contained .html file, and the note
+// links to it. Obsidian opens that link in the default browser.
+async function saveFullPageFile(clip, baseName, attachmentsFolder) {
+  let fileName, path;
+  for (let n = 1; ; n++) {
+    fileName = n === 1 ? `${baseName}.html` : `${baseName}-${n}.html`;
+    path = attachmentsFolder ? `${attachmentsFolder}/${fileName}` : fileName;
+    if (!(await fileExists(path))) break;
   }
+  await putFile(path, clip.html || "", "text/html; charset=utf-8");
+  return { fileName, path };
+}
+
+async function saveClip({ clip, parentId, tags, titleOverride }) {
   const settings = await getSettings();
   const folder = cleanFolder(parentId || settings.defaultFolder);
   const attachmentsFolder = cleanFolder(settings.attachmentsFolder);
@@ -216,7 +239,14 @@ async function saveClip({ clip, parentId, tags, titleOverride }) {
   const { iso, compact } = timestamps();
 
   let body;
-  if (clip.mode === "bookmark") {
+  if (clip.mode === "full") {
+    const pageFile = await saveFullPageFile(
+      clip,
+      `${compact}-${safeFileName(title, 40).replace(/\s/g, "-")}`,
+      attachmentsFolder
+    );
+    body = `[[${pageFile.fileName}|🖼 저장된 전체 페이지 열기]]\n\n원본: [${clip.title || title}](${clip.url})\n`;
+  } else if (clip.mode === "bookmark") {
     body = `${clip.description ? clip.description + "\n\n" : ""}[${clip.title}](${clip.url})\n`;
   } else {
     body = clip.markdown || "";
