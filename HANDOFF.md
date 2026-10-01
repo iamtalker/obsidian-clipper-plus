@@ -52,7 +52,7 @@
 4. **폴더 선택 개선**: API가 빈 폴더를 안 보여줘서 새로 만든 빈 폴더가 목록에 안 나옴. 팝업에서 새 폴더 이름을 직접 입력하는 칸도 고려.
 5. **옵시디언다운 기능**: ~~첨부 폴더를 옵시디언 설정에 맞추기~~(0.38.0 완료), 저장 후 열기 기본값, 노트 템플릿(frontmatter 항목) 설정.
 6. **관리 편의**(사용자가 옵시디언으로 옮기려는 이유): 이 플러그인의 MCP 서버(`https://127.0.0.1:27124/mcp/`)를 Claude에 연결하면 중복 노트 찾기, 안 쓰는 첨부 이미지 정리 같은 걸 Claude가 볼트에서 직접 할 수 있음. 또는 볼트가 그냥 폴더라 스크립트로 해결.
-7. **크롬 웹 스토어**(나중에): `debugger`와 `<all_urls>` 권한이 심사 대상이라 사유 설명이 필요함. 원본도 같은 문제가 있음(원본 HANDOFF 3번). 스토어 이름 "Obsidian Clipper Plus"는 기존 확장(Obsidian Web Clipper, Obsidian Clipper, Obsidian Plus Web Clipper)과 헷갈릴 수 있다는 점은 사용자에게 이미 알렸고, 사용자가 일관성 때문에 이 이름으로 정함.
+7. **크롬 웹 스토어**(나중에): `<all_urls>` 권한은 심사에서 사유 설명이 필요함(원본 HANDOFF 3번에 쓴 문구 참고). `debugger` 권한은 v0.39.1에서 제거됨. 스토어 이름 "Obsidian Clipper Plus"는 기존 확장(Obsidian Web Clipper, Obsidian Clipper, Obsidian Plus Web Clipper)과 헷갈릴 수 있다는 점은 사용자에게 이미 알렸고, 사용자가 일관성 때문에 이 이름으로 정함.
 
 ## 5. 실제 크롬으로 테스트하는 방법
 - 스크래치 폴더에 `npm i puppeteer-core` + `npx @puppeteer/browsers install chrome@stable`(Chrome for Testing — 일반 Chrome 137+는 `--load-extension`을 무시함).
