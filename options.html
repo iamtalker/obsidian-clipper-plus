@@ -8,7 +8,7 @@
   h1 { font-size: 16px; margin: 0 0 12px; }
   label { display: block; font-size: 12px; font-weight: 600; margin: 12px 0 4px; }
   label.check { font-weight: 400; display: flex; gap: 6px; align-items: center; }
-  input[type=text], input[type=password], input:not([type]) { width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
+  select, input[type=text], input[type=password], input:not([type]) { width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
   button { margin-top: 14px; padding: 7px 14px; font-size: 13px; border: none; border-radius: 4px; background: #7c4dff; color: #fff; cursor: pointer; }
   button.secondary { background: #eee; color: #333; margin-left: 8px; }
   #status { margin-top: 10px; font-size: 12px; }
@@ -26,6 +26,16 @@
 
   <label for="key">API key</label>
   <input id="key" type="password" autocomplete="off" placeholder="paste the API key from the plugin's settings" />
+
+  <label for="defMode">Default clip mode</label>
+  <select id="defMode">
+    <option value="article">📄 Article</option>
+    <option value="selection">✂️ Selection</option>
+    <option value="full">🖼 Full Page</option>
+    <option value="bookmark">🔖 Bookmark</option>
+    <option value="webtoon">📜 Webtoon (all big images)</option>
+  </select>
+  <div class="hint">The popup opens with this mode (and the default folder below) already selected — click the icon, then just Clip.</div>
 
   <label for="folder">Default folder for notes</label>
   <input id="folder" placeholder="Clippings" />

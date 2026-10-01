@@ -4,12 +4,14 @@ const DEFAULTS = {
   defaultFolder: "Clippings",
   attachmentsFolder: "Clippings/attachments",
   openAfterSave: false,
+  defaultMode: "article",
 };
 const els = {
   obsidianPort: document.getElementById("port"),
   obsidianKey: document.getElementById("key"),
   defaultFolder: document.getElementById("folder"),
   attachmentsFolder: document.getElementById("attach"),
+  defaultMode: document.getElementById("defMode"),
 };
 const openEl = document.getElementById("open");
 const statusEl = document.getElementById("status");
