@@ -34,7 +34,7 @@ function collect() {
 }
 
 document.getElementById("save").addEventListener("click", () => {
-  chrome.storage.local.set(collect(), () => setStatus("Saved.", true));
+  chrome.storage.local.set(collect(), () => setStatus("저장했습니다.", true));
 });
 
 // Copies Obsidian's "Default location for new attachments"
@@ -43,7 +43,7 @@ document.getElementById("save").addEventListener("click", () => {
 document.getElementById("fromObsidian").addEventListener("click", async (e) => {
   e.preventDefault();
   const { obsidianPort, obsidianKey } = collect();
-  if (!obsidianKey) return setStatus("Enter the API key first.", false);
+  if (!obsidianKey) return setStatus("API 키를 먼저 입력하세요.", false);
   try {
     const res = await fetch(`http://127.0.0.1:${obsidianPort}/vault/.obsidian/app.json`, {
       headers: { Authorization: `Bearer ${obsidianKey}` },
@@ -51,18 +51,18 @@ document.getElementById("fromObsidian").addEventListener("click", async (e) => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const path = ((await res.json()).attachmentFolderPath || "/").trim();
     els.attachmentsFolder.value = path === "/" ? "" : path;
-    const where = path === "/" ? "vault root" : path.startsWith("./") ? `"${path}" (next to the note)` : `"${path}"`;
-    setStatus(`Obsidian saves attachments to: ${where}. Press Save to keep it.`, true);
+    const where = path === "/" ? "볼트 루트" : path.startsWith("./") ? `"${path}" (노트 옆)` : `"${path}"`;
+    setStatus(`옵시디언의 첨부 위치: ${where}. 저장을 눌러야 적용됩니다.`, true);
   } catch (err) {
-    setStatus("Couldn't read Obsidian's setting: " + err.message, false);
+    setStatus("옵시디언 설정을 읽지 못했습니다: " + err.message, false);
   }
 });
 
 document.getElementById("test").addEventListener("click", async () => {
   await chrome.storage.local.set(collect());
-  setStatus("Testing…");
+  setStatus("연결 확인 중…");
   chrome.runtime.sendMessage({ type: "testConnection" }, (res) => {
-    if (res && res.ok) setStatus("Connected to Obsidian ✓", true);
-    else setStatus("Failed: " + (res ? res.error : "no response"), false);
+    if (res && res.ok) setStatus("옵시디언에 연결되었습니다 ✓", true);
+    else setStatus("실패: " + (res ? res.error : "응답 없음"), false);
   });
 });

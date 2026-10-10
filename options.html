@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Obsidian Clipper Plus - Settings</title>
+<title>Obsidian Clipper Plus - 설정</title>
 <style>
   body { font-family: -apple-system, Segoe UI, Arial, sans-serif; width: 440px; padding: 16px; color: #222; }
   h1 { font-size: 16px; margin: 0 0 12px; }
@@ -23,38 +23,38 @@
 </style>
 </head>
 <body>
-  <h1>Obsidian Clipper Plus — Settings</h1>
+  <h1>Obsidian Clipper Plus — 설정</h1>
 
-  <label for="port">Local REST API HTTP port</label>
+  <label for="port">Local REST API HTTP 포트</label>
   <input id="port" placeholder="27123" />
-  <div class="hint">Obsidian → Settings → Community plugins → "Local REST API with MCP" → turn on <b>Enable Non-encrypted (HTTP) Server</b>.</div>
+  <div class="hint">옵시디언 → 설정 → 커뮤니티 플러그인 → "Local REST API with MCP" → <b>Enable Non-encrypted (HTTP) Server</b>를 켜세요.</div>
 
-  <label for="key">API key</label>
-  <input id="key" type="password" autocomplete="off" placeholder="paste the API key from the plugin's settings" />
+  <label for="key">API 키</label>
+  <input id="key" type="password" autocomplete="off" placeholder="플러그인 설정 화면의 API 키를 붙여 넣으세요" />
 
-  <label for="defMode">Default clip mode</label>
+  <label for="defMode">기본 클리핑 방법</label>
   <select id="defMode">
-    <option value="article">📄 Article</option>
-    <option value="selection">✂️ Selection</option>
-    <option value="full">🖼 Full Page</option>
-    <option value="bookmark">🔖 Bookmark</option>
-    <option value="webtoon">📜 Webtoon (all big images)</option>
+    <option value="article">📄 Article (본문만)</option>
+    <option value="selection">✂️ Selection (선택 영역)</option>
+    <option value="full">🖼 Full Page (전체 페이지)</option>
+    <option value="bookmark">🔖 Bookmark (링크만)</option>
+    <option value="webtoon">📜 Webtoon (큰 이미지 전부)</option>
   </select>
-  <div class="hint">The popup opens with this mode (and the default folder below) already selected — click the icon, then just Clip.</div>
+  <div class="hint">팝업이 이 방법(그리고 아래 기본 폴더)으로 미리 선택된 채 열려서, 아이콘을 누르고 Clip만 누르면 저장됩니다.</div>
 
-  <label for="folder">Default folder for notes</label>
+  <label for="folder">노트를 저장할 기본 폴더</label>
   <input id="folder" placeholder="Clippings" />
-  <div class="hint">Relative to the vault root. Empty = vault root. Created automatically.</div>
+  <div class="hint">볼트 루트 기준 경로입니다. 비워 두면 볼트 루트에 저장하고, 폴더가 없으면 자동으로 만듭니다.</div>
 
-  <label for="attach">Attachments folder for images</label>
+  <label for="attach">이미지 첨부 폴더</label>
   <input id="attach" placeholder="Clippings/attachments" />
-  <div class="hint">Empty = vault root. Start with <b>./</b> to save next to the note: <b>./</b> = the note's folder, <b>./attachments</b> = a subfolder of it (same as Obsidian's own setting).
-    <a href="#" id="fromObsidian">Use Obsidian's attachment setting</a></div>
+  <div class="hint">비워 두면 볼트 루트입니다. <b>./</b>로 시작하면 노트 옆에 저장합니다: <b>./</b> = 노트가 있는 폴더, <b>./attachments</b> = 그 안의 하위 폴더(옵시디언 자체 설정과 같은 방식).
+    <a href="#" id="fromObsidian">옵시디언의 첨부 파일 설정 가져오기</a></div>
 
-  <label class="check"><input type="checkbox" id="open" /> Open the note in Obsidian after saving</label>
+  <label class="check"><input type="checkbox" id="open" /> 저장한 뒤 옵시디언에서 노트 열기</label>
 
-  <button id="save">Save</button>
-  <button id="test" class="secondary">Test connection</button>
+  <button id="save">저장</button>
+  <button id="test" class="secondary">연결 테스트</button>
   <div id="status"></div>
 
   <h1 style="margin-top:28px">사이트 규칙 (선택)</h1>
